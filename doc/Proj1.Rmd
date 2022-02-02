@@ -142,37 +142,7 @@ wordcloud(rownames(freq), freq[,1], max.words=100, random.order=FALSE,rot.per=0.
 <span style="font-size:19px;">We can see that "price" is the largest, followed by "upon" and 'money". We can also see that "trade", "tax", ""quantity", and "rent" in the figure, which do not show in the Coummism.</span>
 
 
-
-
-<span style="font-size:19px;">Finally, I will post word clouds for some other philosophy schools. Can you find anything interesting? Leave a comment about what you found!</span>
-
-<span style="font-size:19px;"> ***German Idealism*** :</span>
-```{r, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
-# German Idealism
-phi_ger <- phi[phi$school == "german_idealism",]
-phi_ger
-
-content <- Corpus(VectorSource(phi_ger$sentence_str))
-
-content = tm_map(content, content_transformer(tolower))
-content = tm_map(content, removeNumbers)
-content = tm_map(content, removePunctuation)
-content = tm_map(content, removeWords, c("the", "and", "pron", "one", "will", "can", "may", "must", "say", "man" ,stopwords("english"))) 
-content =  tm_map(content, stripWhitespace)
-
-
-# use tf-idf instead of freq
-content_dtm_tfidf <- DocumentTermMatrix(content, control = list(weighting = weightTfIdf))
-content_dtm_tfidf = removeSparseTerms(content_dtm_tfidf, 0.96)
-#inspect(content_dtm_tfidf[1,1:20])
-freq = data.frame(sort(colSums(as.matrix(content_dtm_tfidf)), decreasing=TRUE))
-
-```
-
-```{r, message=FALSE, warning=FALSE, echo=FALSE}
-wordcloud(rownames(freq), freq[,1], max.words=100, random.order=FALSE,rot.per=0.2,colors=brewer.pal(9,"Dark2"))
-```
-
+<span style="font-size:19px;">Finally, I'll leave a word cloud for continental philosophy, which had been prevalent from the early 20th century in England and later in  other English-speaking countries. Can you find anything interesting from the graph? Leave a comment about what you found!</span>
 
 <span style="font-size:19px;"> ***Continental*** :</span>
 ```{r, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
@@ -199,12 +169,13 @@ freq = data.frame(sort(colSums(as.matrix(content_dtm_tfidf)), decreasing=TRUE))
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 wordcloud(rownames(freq), freq[,1], max.words=100,max_font_size=20, random.order=FALSE,rot.per=0.2,colors=brewer.pal(9,"Dark2"))
+
 ```
 
 
 <span style="font-size:19px;">***Reference***</span>
 
-[1]	Malpas, J., “Donald Davidson”, The Stanford Encyclopedia of Philosophy (Winter 2012 Edition), Edward N. Zalta (ed.), URL = https://plato.stanford.edu/archives/win2012/entries/davidson/.
+[1]	Malpas, J., Donald Davidson, The Stanford Encyclopedia of Philosophy (Winter 2012 Edition), Edward N. Zalta (ed.), URL = https://plato.stanford.edu/archives/win2012/entries/davidson/.
 
 [2] picture from: https://upload.wikimedia.org/wikipedia/commons/a/ae/Aristotle_Altemps_Inv8575.jpg.
 

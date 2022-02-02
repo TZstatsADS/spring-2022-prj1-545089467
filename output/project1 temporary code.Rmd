@@ -161,6 +161,32 @@ wordcloud(rownames(freq), freq[,1], max.words=100,max_font_size=20, random.order
 
 
 
+<span style="font-size:19px;"> ***German Idealism*** :</span>
+```{r, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+# German Idealism
+phi_ger <- phi[phi$school == "german_idealism",]
+phi_ger
+
+content <- Corpus(VectorSource(phi_ger$sentence_str))
+
+content = tm_map(content, content_transformer(tolower))
+content = tm_map(content, removeNumbers)
+content = tm_map(content, removePunctuation)
+content = tm_map(content, removeWords, c("the", "and", "pron", "one", "will", "can", "may", "must", "say", "man" ,stopwords("english"))) 
+content =  tm_map(content, stripWhitespace)
+
+
+# use tf-idf instead of freq
+content_dtm_tfidf <- DocumentTermMatrix(content, control = list(weighting = weightTfIdf))
+content_dtm_tfidf = removeSparseTerms(content_dtm_tfidf, 0.96)
+#inspect(content_dtm_tfidf[1,1:20])
+freq = data.frame(sort(colSums(as.matrix(content_dtm_tfidf)), decreasing=TRUE))
+
+```
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+wordcloud(rownames(freq), freq[,1], max.words=100, random.order=FALSE,rot.per=0.2,colors=brewer.pal(9,"Dark2"))
+```
 
 
 
