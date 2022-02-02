@@ -1,0 +1,233 @@
+---
+title: "Explore famous psychological schools"
+author: "Jiahao Shao"
+date: "2022/2/1"
+output:
+  html_document: default
+  html_notebook: default
+---
+
+
+<center><span style="font-size:15px;"><font face="Times New Roman">*The ultimate value of life depends upon awareness and the power of contemplation rather than upon mere survival.*</front></span></center>
+
+<span style="font-size:15px;"><p align="right">*By Aristotle*</p></span>
+
+<span style="font-size:19px;">The above quote is said by Aristotle, a well-known Greek philosopher and polymath in Ancient Greek. He has achievements in many fields, like math, physics, and especially, philosophy. He explored the relationship between humans and nature. Aristotle’s works and the philosophy school of Aristotle shaped centuries of philosophy from Late Antiquity through the Renaissance, and even today continue to be studied with ardent interest.[1]</span>
+
+<div align=center><img width = '224' height ='300' src ="../figs/Aristotle_Altemps_Inv8575.jpg"></div>
+
+<center>a Greek bronze bust of Aristotle[2]</center>
+
+<span style="font-size:19px;">Then we want to take a deeper look at the sentences Aristotle said and find the most frequent words he has mentioned. Here we would use a dataset from Philosophy Data Project.[3] The dataset contains over 300,000 sentences from over 50 texts spanning ten major schools of philosophy, including Aristotle. We import the dataset, do the data cleaning, ignore the punctuation as well as some common words, and finally, make a word cloud.</span>
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(
+  warning=FALSE,
+  error=FALSE
+)
+
+```
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+# R Libraries
+library(ggplot2)
+library(tm)
+library(wordcloud)
+library(SnowballC)
+library(RColorBrewer)
+library(dplyr)
+library(tidytext)
+library(knitr)
+
+```
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+phi <- read.csv("D:/OneDrive/Documents/5243/data/philosophy_data.csv", stringsAsFactors = F, encoding = "UTF-8")
+#phi_backup <- phi
+#phi <- phi_backup
+```
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+# Aristotle
+phi_ari <- phi[phi$school == "aristotle",]
+phi_ari
+
+#content <- iconv(phi_com$lemmatized_str, to = "UTF-8")
+content <- Corpus(VectorSource(phi_ari$sentence_str))
+
+content = tm_map(content, content_transformer(tolower))
+content = tm_map(content, removeNumbers)
+content = tm_map(content, removePunctuation)
+content = tm_map(content, removeWords, c("the", "and", "-pron-", "one", "will", "can", "may", "must", "say", "man" ,stopwords("english"))) 
+content =  tm_map(content, stripWhitespace)
+
+
+# use tf-idf instead of freq
+content_dtm_tfidf <- DocumentTermMatrix(content, control = list(weighting = weightTfIdf))
+content_dtm_tfidf = removeSparseTerms(content_dtm_tfidf, 0.97)
+#inspect(content_dtm_tfidf[1,1:20])
+freq = data.frame(sort(colSums(as.matrix(content_dtm_tfidf)), decreasing=TRUE))
+
+```
+
+\tiny
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+wordcloud(rownames(freq), freq[,1], max.words=100, random.order=FALSE,rot.per=0.2,colors=brewer.pal(9,"Dark2"))
+```
+
+\normalsize
+<span style="font-size:19px;">The above figure shows the frequency of the words from Aristotle. We can see that "things" has the most frequency, followed by "also", "animals", "nature", "body", etc. That makes sense because Aristotle does explore the relationship between different things, like humans and nature.</span>
+
+<span style="font-size:19px;">Next, we will do something more interesting. Let's talk about the word frequency of two most well-known schools, ***Communism*** and ***Capitalism***.</span>
+
+<span style="font-size:19px;">Let's begin with ***Communism*** :</span>
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+# Communism
+phi_com <- phi[phi$school == "communism",]
+phi_com
+
+#content <- iconv(phi_com$lemmatized_str, to = "UTF-8")
+content <- Corpus(VectorSource(phi_com$sentence_str))
+
+content = tm_map(content, content_transformer(tolower))
+content = tm_map(content, removeNumbers)
+content = tm_map(content, removePunctuation)
+content = tm_map(content, removeWords, c("the", "and", "-pron-", "one", "will", "can", "may", "must", "say", "man" ,stopwords("english"))) 
+content =  tm_map(content, stripWhitespace)
+
+
+# use tf-idf instead of freq
+content_dtm_tfidf <- DocumentTermMatrix(content, control = list(weighting = weightTfIdf))
+content_dtm_tfidf = removeSparseTerms(content_dtm_tfidf, 0.97)
+#inspect(content_dtm_tfidf[1,1:20])
+freq = data.frame(sort(colSums(as.matrix(content_dtm_tfidf)), decreasing=TRUE))
+
+```
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+wordcloud(rownames(freq), freq[,1], max.words=100, random.order=FALSE,rot.per=0.2,colors=brewer.pal(9,"Dark2"))
+```
+
+<span style="font-size:19px;">Here is the word cloud for Communism. The figure is much different than the last one. Not surprisingly, "labour" is the biggest word, meaning that the communists mentioned this word more than any other word. We all know that Communists care about labor, and the figure shows the pattern.</span> 
+
+<span style="font-size:19px;">Then, let's see the word cloud for ***Capitalism*** :</span>
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+# Capitalism
+phi_cap <- phi[phi$school == "capitalism",]
+phi_cap
+
+content <- Corpus(VectorSource(phi_cap$sentence_str))
+
+content = tm_map(content, content_transformer(tolower))
+content = tm_map(content, removeNumbers)
+content = tm_map(content, removePunctuation)
+content = tm_map(content, removeWords, c("the", "and", "pron", "one", "will", "can", "may", "must", "say", "man" ,stopwords("english"))) 
+content =  tm_map(content, stripWhitespace)
+
+
+# use tf-idf instead of freq
+content_dtm_tfidf <- DocumentTermMatrix(content, control = list(weighting = weightTfIdf))
+content_dtm_tfidf = removeSparseTerms(content_dtm_tfidf, 0.96)
+#inspect(content_dtm_tfidf[1,1:20])
+freq = data.frame(sort(colSums(as.matrix(content_dtm_tfidf)), decreasing=TRUE))
+
+```
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+wordcloud(rownames(freq), freq[,1], max.words=100, random.order=FALSE,rot.per=0.2,colors=brewer.pal(9,"Dark2"))
+```
+
+<span style="font-size:19px;">We can see that "price" is the largest, followed by "upon" and 'money". We can also see that "trade", "tax", ""quantity", and "rent" in the figure, which do not show in the Coummism.</span>
+
+
+
+
+<span style="font-size:19px;">Finally, I will post word clouds for some other philosophy schools. Can you find anything interesting? Leave a comment about what you found!</span>
+
+<span style="font-size:19px;"> ***German Idealism*** :</span>
+```{r, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+# German Idealism
+phi_ger <- phi[phi$school == "german_idealism",]
+phi_ger
+
+content <- Corpus(VectorSource(phi_ger$sentence_str))
+
+content = tm_map(content, content_transformer(tolower))
+content = tm_map(content, removeNumbers)
+content = tm_map(content, removePunctuation)
+content = tm_map(content, removeWords, c("the", "and", "pron", "one", "will", "can", "may", "must", "say", "man" ,stopwords("english"))) 
+content =  tm_map(content, stripWhitespace)
+
+
+# use tf-idf instead of freq
+content_dtm_tfidf <- DocumentTermMatrix(content, control = list(weighting = weightTfIdf))
+content_dtm_tfidf = removeSparseTerms(content_dtm_tfidf, 0.96)
+#inspect(content_dtm_tfidf[1,1:20])
+freq = data.frame(sort(colSums(as.matrix(content_dtm_tfidf)), decreasing=TRUE))
+
+```
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+wordcloud(rownames(freq), freq[,1], max.words=100, random.order=FALSE,rot.per=0.2,colors=brewer.pal(9,"Dark2"))
+```
+
+
+<span style="font-size:19px;"> ***Continental*** :</span>
+```{r, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+# continental
+phi_cont <- phi[phi$school == "continental",]
+phi_cont
+
+content <- Corpus(VectorSource(phi_cont$sentence_str))
+
+content = tm_map(content, content_transformer(tolower))
+content = tm_map(content, removeNumbers)
+content = tm_map(content, removePunctuation)
+content = tm_map(content, removeWords, c("the", "and", "pron", "one", "will", "can", "may", "must", "say", "man" ,stopwords("english"))) 
+content =  tm_map(content, stripWhitespace)
+
+
+# use tf-idf instead of freq
+content_dtm_tfidf <- DocumentTermMatrix(content, control = list(weighting = weightTfIdf))
+content_dtm_tfidf = removeSparseTerms(content_dtm_tfidf, 0.98)
+#inspect(content_dtm_tfidf[1,1:20])
+freq = data.frame(sort(colSums(as.matrix(content_dtm_tfidf)), decreasing=TRUE))
+
+```
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+wordcloud(rownames(freq), freq[,1], max.words=100,max_font_size=20, random.order=FALSE,rot.per=0.2,colors=brewer.pal(9,"Dark2"))
+```
+
+
+<span style="font-size:19px;">***Reference***</span>
+
+[1]	Malpas, J., “Donald Davidson”, The Stanford Encyclopedia of Philosophy (Winter 2012 Edition), Edward N. Zalta (ed.), URL = https://plato.stanford.edu/archives/win2012/entries/davidson/.
+
+[2] picture from: https://upload.wikimedia.org/wikipedia/commons/a/ae/Aristotle_Altemps_Inv8575.jpg.
+
+[3] dataset from: https://www.kaggle.com/kouroshalizadeh/history-of-philosophy
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

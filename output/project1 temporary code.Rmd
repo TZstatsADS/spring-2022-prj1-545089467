@@ -1,0 +1,171 @@
+
+
+```{r}
+content <- Corpus(VectorSource(phi1$lemmatized_str))
+
+content = tm_map(content, content_transformer(tolower))
+content = tm_map(content, removeNumbers)
+content = tm_map(content, removePunctuation)
+content = tm_map(content, removeWords, c("the", "and", "pron",stopwords("english")))
+content =  tm_map(content, stripWhitespace)
+
+inspect(content[1])
+content_dtm <- DocumentTermMatrix(content)
+content_dtm <- removeSparseTerms(content_dtm, 0.99)
+
+inspect(content_dtm[1,1:20])
+
+freq = data.frame(sort(colSums(as.matrix(content_dtm)), decreasing=TRUE))
+wordcloud(rownames(freq), freq[,1], max.words=50, colors=brewer.pal(1, "Dark2"))
+
+# use tf-idf instead of freq
+content_dtm_tfidf <- DocumentTermMatrix(content, control = list(weighting = weightTfIdf))
+content_dtm_tfidf = removeSparseTerms(content_dtm_tfidf, 0.95)
+freq = data.frame(sort(colSums(as.matrix(content_dtm_tfidf)), decreasing=TRUE))
+wordcloud(rownames(freq), freq[,1], max.words=100, colors=brewer.pal(1, "Dark2"))
+
+```
+
+
+
+```{r}
+#phi$original_publication_date <- as.numeric(phi$original_publication_date)
+#phi$title <- as.factor(phi$title)
+summary(phi)
+
+```
+
+```{r}
+# Interactive Word Cloud
+phi1<- phi[,c(3, 11)]
+phi1
+
+```
+
+
+```{r}
+
+hist(x=phi$title)
+hist(phi$school)
+# counts
+ggplot(data.frame(phi$title), aes(x=phi$title)) +
+  geom_bar()
+```
+
+```{r}
+plot(phi$title)
+
+```
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo=FALSE,
+  warning=FALSE,
+  error=FALSE,
+  message=FALSE
+)
+
+```
+
+
+
+
+
+#libraries
+library(data.table) #fread
+library(dplyr) #ranking frequency
+library(grDevices) #png function
+library(wordcloud) #wordcloud
+library(RColorBrewer) #brewer colors
+
+
+<font face="Times New Roman">
+
+
+
+
+
+
+```{r}
+# Capitalism
+phi_cap <- phi[phi$school == "capitalism",]
+phi_cap
+
+content <- Corpus(VectorSource(phi_cap$lemmatized_str))
+
+content = tm_map(content, content_transformer(tolower))
+content = tm_map(content, removeNumbers)
+content = tm_map(content, removePunctuation)
+content = tm_map(content, removeWords, c("the", "and", "pron", "one", "will", "can", "may", "must", "say", "man" ,stopwords("english"))) 
+content =  tm_map(content, stripWhitespace)
+
+
+# use tf-idf instead of freq
+content_dtm_tfidf <- DocumentTermMatrix(content, control = list(weighting = weightTfIdf))
+content_dtm_tfidf = removeSparseTerms(content_dtm_tfidf, 0.96)
+#inspect(content_dtm_tfidf[1,1:20])
+freq = data.frame(sort(colSums(as.matrix(content_dtm_tfidf)), decreasing=TRUE))
+wordcloud(rownames(freq), freq[,1], max.words=100, random.order=FALSE,rot.per=0.2,colors=brewer.pal(9,"Dark2"))
+
+
+
+```
+
+
+!["a Greek bronze bust of Aristotle"](https://upload.wikimedia.org/wikipedia/commons/a/ae/Aristotle_Altemps_Inv8575.jpg)
+
+
+
+
+```{r}
+# different schools
+# Plato, Aristotle, Rationalism, Empiricism, German Idealism, Communism, Capitalism, Phenomenology, Continental Philosophy, and Analytic Philosophy.
+# 柏拉图，亚里士多德，理性主义，经验主义，德国唯心主义，共产主义，资本主义，现象学，大陆哲学，分析哲学。  
+#phi$school <- factor(phi$school)
+#head(phi$school)
+#levels(phi$school)
+```
+
+
+
+<span style="font-size:19px;"> ***Continental*** :</span>
+```{r, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+# continental
+phi_cont <- phi[phi$school == "continental",]
+phi_cont
+
+content <- Corpus(VectorSource(phi_cont$sentence_str))
+
+content = tm_map(content, content_transformer(tolower))
+content = tm_map(content, removeNumbers)
+content = tm_map(content, removePunctuation)
+content = tm_map(content, removeWords, c("the", "and", "pron", "one", "will", "can", "may", "must", "say", "man" ,stopwords("english"))) 
+content =  tm_map(content, stripWhitespace)
+
+
+# use tf-idf instead of freq
+content_dtm_tfidf <- DocumentTermMatrix(content, control = list(weighting = weightTfIdf))
+content_dtm_tfidf = removeSparseTerms(content_dtm_tfidf, 0.98)
+#inspect(content_dtm_tfidf[1,1:20])
+freq = data.frame(sort(colSums(as.matrix(content_dtm_tfidf)), decreasing=TRUE))
+
+```
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+wordcloud(rownames(freq), freq[,1], max.words=100,max_font_size=20, random.order=FALSE,rot.per=0.2,colors=brewer.pal(9,"Dark2"))
+```
+
+
+
+
+
+
+
+
+
+
+
+
