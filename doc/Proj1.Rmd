@@ -3,8 +3,8 @@ title: "Explore famous psychological schools"
 author: "Jiahao Shao"
 date: "2022/2/1"
 output:
-  html_document: default
   html_notebook: default
+  html_document: default
 ---
 
 
@@ -141,6 +141,7 @@ wordcloud(rownames(freq), freq[,1], max.words=100, random.order=FALSE,rot.per=0.
 
 <span style="font-size:19px;">We can see that "price" is the largest, followed by "upon" and 'money". We can also see that "trade", "tax", ""quantity", and "rent" in the figure, which do not show in the Coummism.</span>
 
+<span style="font-size:19px;">Therefore, creating a word cloud and explore the results can be a good way to get a better understanding of different philosophy schools.</span>
 
 <span style="font-size:19px;">Finally, I'll leave a word cloud for continental philosophy, which had been prevalent from the early 20th century in England and later in  other English-speaking countries. Can you find anything interesting from the graph? Leave a comment about what you found!</span>
 
