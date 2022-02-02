@@ -10,7 +10,7 @@ This is the first and only *individual* (as opposed to *team*) project this seme
 Term: Fall 2021
 
 + Projec title: Explore famous psychological schools
-+ This project is conducted by Jiahao
++ This project is conducted by: Jiahao Shao
 
 + Project summary: Use dataset from Philosophy Data Project, conduct word coulds using R and explore interesting findings.
 
